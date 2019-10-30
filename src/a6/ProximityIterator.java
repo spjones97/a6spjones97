@@ -29,7 +29,8 @@ public class ProximityIterator implements Iterator<Driver> {
     @Override
     public Driver next() {
         if (drivers.hasNext()) {
-            return drivers.next();
+            Driver tempDriver = drivers.next();
+            return tempDriver;
         } else {
             throw new NoSuchElementException();
         }
