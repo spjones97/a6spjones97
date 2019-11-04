@@ -19,15 +19,11 @@ public class ProximityIterator implements Iterator<Driver> {
 
     @Override
     public boolean hasNext() {
+        this.next();
         if (driver == null) {
             return false;
         } else {
-            this.next();
-            if (driver == null) {
-                return false;
-            } else {
-                return true;
-            }
+            return true;
         }
     }
 
