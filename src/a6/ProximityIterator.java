@@ -33,9 +33,9 @@ public class ProximityIterator implements Iterator<Driver> {
 
     @Override
     public Driver next() {
-        if (!hasNext()) {
-            throw new NoSuchElementException();
-        }
+//        if (!hasNext()) {
+//            throw new NoSuchElementException();
+//        }
         for (Driver tempDriver : driver_pool) {
             if (tempDriver.getVehicle().getPosition().getManhattanDistanceTo(client_position) <= proximity_limit) {
                 driver = tempDriver;
