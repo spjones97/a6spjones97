@@ -46,7 +46,7 @@ public class ExpandingProximityIterator implements Iterator<Driver> {
                     }
                 } else if (numOne == 1) {
                     if (_nextDriver.getVehicle().getPosition().getManhattanDistanceTo(_clientPosition) > 1 &&
-                            _nextDriver.getVehicle().getPosition().getManhattanDistanceTo(_clientPosition) > (1 + (numTwo * _expansionStep))) {
+                            _nextDriver.getVehicle().getPosition().getManhattanDistanceTo(_clientPosition) <= (1 + _expansionStep)) {
                         return true;
                     }
                 } else if (numOne > 1) {
@@ -56,8 +56,8 @@ public class ExpandingProximityIterator implements Iterator<Driver> {
                     }
                 }
             }
-            numOne += 1;
-            numTwo += 1;
+            numOne++;
+            numTwo++;
             _driverIterator = _driverPool.iterator();
         }
         return false;
