@@ -1,61 +1,52 @@
 package a6;
 
-import java.util.Iterator;
+import java.util.*;
 
 public class ExpandingProximityIterator implements Iterator<Driver> {
 
-    private Iterable<Driver> driverPool;
-    private Position clientPosition;
-    private int expansionStep;
-    private Driver driver;
+    private Iterable<Driver> _driverPool;
+    private Iterator<Driver> _driverIterator;
+    private Position _clientPosition;
+    private int _expansionStep;
+    private Driver _nextDriver;
     private int counter;
 
     public ExpandingProximityIterator(Iterable<Driver> driver_pool, Position client_position, int expansion_step) {
-        this.driverPool = driver_pool;
-        this.clientPosition = client_position;
-        this.expansionStep = expansion_step;
-        this.driver = null;
+        if (driver_pool == null || client_position == null || expansion_step < 0) {
+            throw new IllegalArgumentException();
+        }
+        this._driverPool = driver_pool;
+        this._driverIterator = driver_pool.iterator();
+        this._clientPosition = client_position;
+        this._expansionStep = expansion_step;
+        this._nextDriver = null;
         this.counter = 0;
     }
 
     @Override
     public boolean hasNext() {
-        if (driver == null) {
-            return false;
-        } else {
-            this.next();
-            if (driver == null) {
-                return false;
-            } else {
+        if (_nextDriver != null && _nextDriver.getVehicle().getPosition().getManhattanDistanceTo(_clientPosition) <= 1) {
+            return true;
+        }
+        while (_driverIterator.hasNext()) {
+            counter += 1;
+            _nextDriver = _driverIterator.next();
+            if (_nextDriver.getVehicle().getPosition().getManhattanDistanceTo(_clientPosition) > 1 &&
+                    _nextDriver.getVehicle().getPosition().getManhattanDistanceTo(_clientPosition) <= (1 + (counter)*_expansionStep)) {
                 return true;
             }
         }
+        return false;
+
     }
 
     @Override
     public Driver next() {
-        for (Driver tempDriver : driverPool) {
-            if (tempDriver == null) {
-                return null;
-            }
-            if (tempDriver.getVehicle().getPosition().getManhattanDistanceTo(clientPosition) <= 1) {
-                driver = tempDriver;
-                tempDriver = null;
-                return driver;
-            }
+        if (!this.hasNext()) {
+            throw new NoSuchElementException();
         }
-        counter += 1;
-        for (Driver tempDriver : driverPool) {
-            if (tempDriver == null) {
-                return null;
-            }
-            if (tempDriver.getVehicle().getPosition().getManhattanDistanceTo(clientPosition) > 1 &&
-                    tempDriver.getVehicle().getPosition().getManhattanDistanceTo(clientPosition) <= 1 + (counter * expansionStep)) {
-                driver = tempDriver;
-                tempDriver = null;
-                return driver;
-            }
-        }
-        return null;
+        Driver tempDriver = _nextDriver;
+        _nextDriver = null;
+        return tempDriver;
     }
 }
