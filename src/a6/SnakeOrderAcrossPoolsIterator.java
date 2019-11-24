@@ -6,11 +6,11 @@ public class SnakeOrderAcrossPoolsIterator implements Iterator<Driver> {
     private List<Iterable<Driver>> _listOfPools;
     private List<Iterator<Driver>> _listOfIterators;
     private Driver _nextDriver;
-    private int index = 1;
-    private boolean forwards = true;
-    private boolean backwards = false;
+    private int index;
+    private boolean forwards;
 
     public SnakeOrderAcrossPoolsIterator(List<Iterable<Driver>> driver_pools) {
+        this.index = 0;
         if (driver_pools == null) {
             throw new IllegalArgumentException("Input value is null");
         }
@@ -25,11 +25,6 @@ public class SnakeOrderAcrossPoolsIterator implements Iterator<Driver> {
     @Override
     public boolean hasNext() {
         boolean start = false;
-        for (int i = 0; i < _listOfIterators.size(); i++) {
-            if (_listOfIterators.get(i).hasNext()) {
-                start = true;
-            }
-        }
         while (start) {
             if (forwards) {
                 for (int i = index; i < _listOfIterators.size(); i++) {
@@ -38,8 +33,7 @@ public class SnakeOrderAcrossPoolsIterator implements Iterator<Driver> {
                         return true;
                     }
                 }
-            }
-            if (backwards) {
+            } else {
                 for (int i = index; i >= 0; i--) {
                     if (_listOfIterators.get(i).hasNext()) {
                         _nextDriver = _listOfIterators.get(i).next();
@@ -48,7 +42,6 @@ public class SnakeOrderAcrossPoolsIterator implements Iterator<Driver> {
                 }
             }
             forwards = !forwards;
-            backwards = !backwards;
             for (Iterable<Driver> i : _listOfPools) {
                 _listOfIterators.add(i.iterator());
             }
@@ -60,12 +53,11 @@ public class SnakeOrderAcrossPoolsIterator implements Iterator<Driver> {
     public Driver next() {
         if (forwards) {
             index++;
-        }
-        if (backwards) {
+        } else {
             index--;
         }
         if (!this.hasNext()) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("No Element Exists");
         }
         Driver tempDriver = _nextDriver;
         _nextDriver = null;
