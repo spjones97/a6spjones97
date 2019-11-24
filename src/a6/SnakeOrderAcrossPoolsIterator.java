@@ -6,12 +6,12 @@ public class SnakeOrderAcrossPoolsIterator implements Iterator<Driver> {
     private List<Iterable<Driver>> _listOfPools;
     private List<Iterator<Driver>> _listOfIterators;
     private Driver _nextDriver;
-    private int index;
-    private boolean forwards;
+    private int listIndex;
+    private boolean forward;
 
     public SnakeOrderAcrossPoolsIterator(List<Iterable<Driver>> driver_pools) {
-        this.forwards = true;
-        this.index = 0;
+        this.forward = true;
+        this.listIndex = 0;
         if (driver_pools == null) {
             throw new IllegalArgumentException("Input value is null");
         }
@@ -25,38 +25,36 @@ public class SnakeOrderAcrossPoolsIterator implements Iterator<Driver> {
 
     @Override
     public boolean hasNext() {
-        boolean start = true;
-        while (start) {
-            if (forwards) {
-                for (int i = index; i < _listOfIterators.size(); i++) {
+        if (_nextDriver != null) {
+            return true;
+        }
+        while (listIndex < _listOfIterators.size() && listIndex >= 0) {
+            if (forward) {
+                for (int i = listIndex; i < _listOfIterators.size(); i++) {
                     if (_listOfIterators.get(i).hasNext()) {
                         _nextDriver = _listOfIterators.get(i).next();
                         return true;
                     }
                 }
             } else {
-                for (int i = index; i > 0; i--) {
+                for (int i = listIndex; i >= 0; i--) {
                     if (_listOfIterators.get(i).hasNext()) {
                         _nextDriver = _listOfIterators.get(i).next();
                         return true;
                     }
                 }
             }
-            start = false;
-            forwards = !forwards;
-            for (Iterable<Driver> i : _listOfPools) {
-                _listOfIterators.add(i.iterator());
-            }
+            forward = !forward;
         }
         return false;
     }
 
     @Override
     public Driver next() {
-        if (forwards) {
-            index++;
+        if (forward) {
+            listIndex++;
         } else {
-            index--;
+            listIndex--;
         }
         if (!this.hasNext()) {
             throw new NoSuchElementException("No Element Exists");
